@@ -1,25 +1,22 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const port = 3000;
+require('dotenv').config(); // Asegúrate de tener 'dotenv' en tus dependencias.
+
+const port = process.env.PORT || 3000;
+
 
 // Middleware para parsear JSON
 app.use(express.json());
 
-// Configuración personalizada de CORS
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin && origin.startsWith('http://localhost:') || origin === `http://192.168.100.25:${req.socket.localPort}`) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-  }
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  next();
-});
+// Configuración CORS
+// Permitirá solicitudes de cualquier origen (cualquier dominio)
+app.use(cors({ 
+  origin: '*', // Esto permite que todos los orígenes puedan acceder a tu API
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+  allowedHeaders: ['Content-Type'], // Encabezados permitidos
+  credentials: true // Si es necesario enviar cookies o credenciales
+}));
 
 // Simulación de base de datos en memoria
 let contacts = [
